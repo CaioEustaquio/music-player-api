@@ -1,0 +1,31 @@
+{
+  "name": "music-player-api",
+  "version": "1.0.0",
+  "description": "Music player api",
+  "scripts": {
+    "start": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch --env-file=.env index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CaioEustaquio/music-player-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/CaioEustaquio/music-player-api/issues"
+  },
+  "homepage": "https://github.com/CaioEustaquio/music-player-api#readme",
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "env-var": "^7.5.0",
+    "fastify": "^5.12.7",
+    "fastify-type-provider-zod": "^7.0.0",
+    "zod": "^4.6.7"
+  }
+}
