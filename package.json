@@ -4,7 +4,7 @@
   "description": "Music player api",
   "scripts": {
     "start": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch --env-file=.env index.ts"
+    "dev": "tsx watch --env-file=.env app.ts"
   },
   "repository": {
     "type": "git",

@@ -8,16 +8,90 @@ export class GetAllSongsController {
     request: FastifyRequest<{ Querystring: GetAllSongsDto }>,
     reply: FastifyReply
   ) => {
-    const data = request.query;
+    const {
+      query
+    } = request.query;
     return [
       {
-        id: 1,
-        title: "Billie Jean",
-        author: "Michael Jackson",
-        singer: "Michael Jackson",
-        duration: "4:54",
-        thumbnail: "https://amazonaws.com",
-        file: "https://amazonaws.com"
+        "id": "019e51ba-b7f3-71c0-a7ff-e82b0d8b5790",
+        "title": "Billie Jean",
+        "author": "Michael Jackson",
+        "singer": "Michael Jackson",
+        "duration": "4:54",
+        "image": "/files/thumbnail/thriller-album.jpg",
+        "file": "/files/music/billie-jean.mp3"
+      },
+      {
+        "id": "019e51ba-b7f3-7472-aafc-0d6a667e54a9",
+        "title": "Beat It",
+        "author": "Michael Jackson",
+        "singer": "Michael Jackson",
+        "duration": "4:18",
+        "image": "/files/thumbnail/thriller-album.jpg",
+        "file": "/files/music/beat-it.mp3"
+      },
+      {
+        "id": "e3233f9d-f4e9-4985-85db-137863f66a9a",
+        "title": "Dramaturgy",
+        "author": "Eve",
+        "singer": "Eve",
+        "duration": "4:05",
+        "image": "/files/thumbnail/dramaturgy.jpeg",
+        "file": "/files/music/dramaturgy.mp3"
+      },
+      {
+        "id": "dc05871e-1e1a-4327-adb3-152bdae5d864",
+        "title": "Everglow",
+        "author": "SHIFT UP, Hyunmin Cho",
+        "singer": "Aejin Kwon",
+        "duration": "3:53",
+        "image": "/files/thumbnail/everglow.jpg",
+        "file": "/files/music/everglow.mp3"
+      },
+      {
+        "id": "325a33cc-364d-4e11-a625-ac54dfa99b47",
+        "title": "Two Breaths Walking",
+        "author": "Deco*27",
+        "singer": "Hatsune Miku",
+        "duration": "3:07",
+        "image": "/files/thumbnail/two-breaths-walking.png",
+        "file": "/files/music/two-breaths-walking.mp3"
+      },
+      {
+        "id": "39c09c92-5964-4775-8041-74a6161b5531",
+        "title": "Narisumashi Genga",
+        "author": "KulfiQ",
+        "singer": "Hatsune Miku, Kagamine Rin",
+        "duration": "3:51",
+        "image": "/files/thumbnail/narisumashi-gengar.jpg",
+        "file": "/files/music/narisumashi-gengar.mp3"
+      },
+      {
+        "id": "8a2a6cc3-d3f6-49de-9a9b-413bb60efcaa",
+        "title": "Blue Boi",
+        "author": "LAKEY INSPIRED",
+        "singer": "",
+        "duration": "1:46",
+        "image": "/files/thumbnail/blue-boi.jpg",
+        "file": "/files/music/blue-boi.mp3"
+      },
+      {
+        "id": "a009e11e-99ec-4052-8420-53c1854cdcbf",
+        "title": "Feel Good Inc. - Instrumental",
+        "author": "Gorillaz",
+        "singer": "Gorillaz",
+        "duration": "3:46",
+        "image": "/files/thumbnail/feel-good-inc.jpg",
+        "file": "/files/music/feel-good-inc-instrumental.mp3"
+      },
+      {
+        "id": "2c73ed9b-bb1a-41e3-89ea-69f22e03744d",
+        "title": "Tim Henson VS Ichika Nito",
+        "author": "",
+        "singer": "",
+        "duration": "1:39",
+        "image": "/files/thumbnail/tim-henson-vs-ichika-nito.png",
+        "file": "/files/music/tim-henson-vs-ichika-nito.mp3"
       }
     ];
   }

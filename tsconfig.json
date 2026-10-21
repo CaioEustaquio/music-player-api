@@ -24,18 +24,6 @@
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "@config/*": [
-        "config/*"
-      ],
-      "@routes/*": [
-        "routes/*"
-      ],
-      "@dtos/*": [
-        "dtos/*"
-      ],
-      "@controllers/*": [
-        "controllers/*"
       ]
     }
   }
