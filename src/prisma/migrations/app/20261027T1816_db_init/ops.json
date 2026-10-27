@@ -1,0 +1,462 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.Author",
+    "label": "Create table \"Author\"",
+    "summary": "Creates table \"Author\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Author"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Author\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Author\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Author\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Author\"",
+        "sql": "CREATE TABLE \"public\".\"Author\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"image_url\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Author\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Author\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Author\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Song",
+    "label": "Create table \"Song\"",
+    "summary": "Creates table \"Song\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Song"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Song\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Song\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Song\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Song\"",
+        "sql": "CREATE TABLE \"public\".\"Song\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"duration\" text NOT NULL,\n  \"file_url\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"thumbnail_image_url\" text NOT NULL,\n  \"title\" text NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Song\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Song\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Song\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.SongsAuthors",
+    "label": "Create table \"SongsAuthors\"",
+    "summary": "Creates table \"SongsAuthors\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "SongsAuthors"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"SongsAuthors\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SongsAuthors\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"SongsAuthors\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"SongsAuthors\"",
+        "sql": "CREATE TABLE \"public\".\"SongsAuthors\" (\n  \"author_id\" uuid NOT NULL,\n  \"song_id\" uuid NOT NULL,\n  PRIMARY KEY (\"author_id\", \"song_id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"SongsAuthors\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"SongsAuthors\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"SongsAuthors\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "unique.Author.Author_name_key",
+    "label": "Add unique constraint on \"Author\" (name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Author_name_key",
+        "table": "Author"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Author_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Author_name_key",
+          "public",
+          "\"public\".\"Author\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Author_name_key\" on \"Author\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Author_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"Author\" ADD CONSTRAINT \"Author_name_key\" UNIQUE (\"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Author_name_key\" exists on (name)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Author_name_key",
+          "public",
+          "\"public\".\"Author\"",
+          "u",
+          "[\"name\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Song.Song_title_key",
+    "label": "Add unique constraint on \"Song\" (title)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Song_title_key",
+        "table": "Song"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Song_title_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Song_title_key",
+          "public",
+          "\"public\".\"Song\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Song_title_key\" on \"Song\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Song_title_key\"",
+        "sql": "ALTER TABLE \"public\".\"Song\" ADD CONSTRAINT \"Song_title_key\" UNIQUE (\"title\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Song_title_key\" exists on (title)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Song_title_key",
+          "public",
+          "\"public\".\"Song\"",
+          "u",
+          "[\"title\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SongsAuthors.SongsAuthors_author_id_idx_f3862461",
+    "label": "Create index \"SongsAuthors_author_id_idx_f3862461\" on \"SongsAuthors\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SongsAuthors_author_id_idx_f3862461",
+        "table": "SongsAuthors"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SongsAuthors_author_id_idx_f3862461\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SongsAuthors_author_id_idx_f3862461\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"SongsAuthors_author_id_idx_f3862461\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SongsAuthors_author_id_idx_f3862461\"",
+        "sql": "CREATE INDEX \"SongsAuthors_author_id_idx_f3862461\" ON \"public\".\"SongsAuthors\" (\"author_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SongsAuthors_author_id_idx_f3862461\" exists on \"SongsAuthors\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"SongsAuthors_author_id_idx_f3862461\"",
+          "i",
+          "I",
+          "\"public\".\"SongsAuthors\"",
+          "btree",
+          "[\"author_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SongsAuthors.SongsAuthors_song_id_idx_2e2805d0",
+    "label": "Create index \"SongsAuthors_song_id_idx_2e2805d0\" on \"SongsAuthors\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SongsAuthors_song_id_idx_2e2805d0",
+        "table": "SongsAuthors"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SongsAuthors_song_id_idx_2e2805d0\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SongsAuthors_song_id_idx_2e2805d0\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"SongsAuthors_song_id_idx_2e2805d0\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SongsAuthors_song_id_idx_2e2805d0\"",
+        "sql": "CREATE INDEX \"SongsAuthors_song_id_idx_2e2805d0\" ON \"public\".\"SongsAuthors\" (\"song_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SongsAuthors_song_id_idx_2e2805d0\" exists on \"SongsAuthors\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"SongsAuthors_song_id_idx_2e2805d0\"",
+          "i",
+          "I",
+          "\"public\".\"SongsAuthors\"",
+          "btree",
+          "[\"song_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SongsAuthors.SongsAuthors_author_id_fkey",
+    "label": "Add foreign key \"SongsAuthors_author_id_fkey\" on \"SongsAuthors\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SongsAuthors_author_id_fkey",
+        "table": "SongsAuthors"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SongsAuthors_author_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SongsAuthors_author_id_fkey",
+          "public",
+          "\"public\".\"SongsAuthors\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"SongsAuthors_author_id_fkey\" on \"SongsAuthors\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SongsAuthors_author_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SongsAuthors\"\nADD CONSTRAINT \"SongsAuthors_author_id_fkey\"\nFOREIGN KEY (\"author_id\")\nREFERENCES \"public\".\"Author\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SongsAuthors_author_id_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "SongsAuthors_author_id_fkey",
+          "public",
+          "\"public\".\"SongsAuthors\"",
+          "f",
+          "[\"author_id\"]",
+          "\"public\".\"Author\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SongsAuthors.SongsAuthors_song_id_fkey",
+    "label": "Add foreign key \"SongsAuthors_song_id_fkey\" on \"SongsAuthors\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SongsAuthors_song_id_fkey",
+        "table": "SongsAuthors"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SongsAuthors_song_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SongsAuthors_song_id_fkey",
+          "public",
+          "\"public\".\"SongsAuthors\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"SongsAuthors_song_id_fkey\" on \"SongsAuthors\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SongsAuthors_song_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SongsAuthors\"\nADD CONSTRAINT \"SongsAuthors_song_id_fkey\"\nFOREIGN KEY (\"song_id\")\nREFERENCES \"public\".\"Song\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SongsAuthors_song_id_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "SongsAuthors_song_id_fkey",
+          "public",
+          "\"public\".\"SongsAuthors\"",
+          "f",
+          "[\"song_id\"]",
+          "\"public\".\"Song\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  }
+]

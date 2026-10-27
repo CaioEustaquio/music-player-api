@@ -1,0 +1,32 @@
+// use prisma-8
+model Author {
+  id         Uuid                        @id @onCreate(uuid())
+  name       String                      @unique
+  image_url  String
+  songs      SongsAuthors[]
+  created_at TimestamptzString           @default(now())
+  updated_at temporal.updatedAtString()?
+}
+
+model Song {
+  id                  Uuid                        @id @onCreate(uuid())
+  title               String                      @unique
+  duration            String
+  release_date        DateString
+  thumbnail_image_url String
+  file_url            String
+  authors             SongsAuthors[]
+  created_at          TimestamptzString           @default(now())
+  updated_at          temporal.updatedAtString()?
+}
+
+model SongsAuthors {
+  author_id Uuid
+  song_id   Uuid
+
+  author    Author @relation(fields: [author_id], references: [id])
+  song      Song   @relation(fields: [song_id], references: [id])
+
+  @@id([author_id, song_id])
+  @@index([song_id])
+}

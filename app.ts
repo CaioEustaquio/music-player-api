@@ -2,13 +2,15 @@ import Fastify from 'fastify'
 import envConfig from '@/config/env';
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod"
 import appRoutes from '@/routes/routes';
+import errorHandlerMiddleware from '@/middlewares/errorHandlerMiddleware';
 
 const app = Fastify({
-  logger: true
+  logger: false
 });
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
+errorHandlerMiddleware(app);
 app.register(appRoutes);
 
 app.listen({ port: envConfig.port }, (err, address) => {
