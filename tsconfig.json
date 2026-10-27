@@ -12,7 +12,7 @@
       "ESNext.Iterator",
       "ESNext.Promise"
     ],
-    "module": "nodenext",
+    "module": "preserve",
     "target": "es2024",
     "types": [
       "node"
@@ -20,23 +20,12 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node16",
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "@config/*": [
-        "config/*"
-      ],
-      "@routes/*": [
-        "routes/*"
-      ],
-      "@dtos/*": [
-        "dtos/*"
-      ],
-      "@controllers/*": [
-        "controllers/*"
       ]
-    }
+    },
+    "resolveJsonModule": true
   }
 }

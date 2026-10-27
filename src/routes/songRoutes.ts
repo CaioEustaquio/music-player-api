@@ -1,20 +1,15 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { GetAllSongsSchema } from "@/dtos/GetAllSongsDto";
+import { GetAllSongsQuerySchema } from "@/dtos/GetAllSongsQueryDto";
 import { GetAllSongsController } from "@/controllers/GetAllSongsController";
+import { SongService } from "@/services/SongService";
 
-const getAllSongsController = new GetAllSongsController();
-
-const songRoutes = async (
-  fastify: FastifyInstance,
-  options: FastifyPluginOptions
-) => {
-  fastify.get(
-    "/songs",
-    {
-      schema: { querystring: GetAllSongsSchema }
-    },
-    getAllSongsController.getAll
-  );
+const songService = new SongService();
+const getAllSongsController = new GetAllSongsController(songService);
+const songRoutes = async (app: FastifyInstance) => {
+  app.get("/", {
+    schema: { querystring: GetAllSongsQuerySchema }
+  },
+    getAllSongsController.getAll.bind(getAllSongsController)
+  )
 }
-
 export default songRoutes;

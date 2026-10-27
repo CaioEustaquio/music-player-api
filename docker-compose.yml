@@ -1,0 +1,11 @@
+services:
+  database:
+    image: postgres:18
+    container_name: music-player-api
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: music_player_api
+    restart: always

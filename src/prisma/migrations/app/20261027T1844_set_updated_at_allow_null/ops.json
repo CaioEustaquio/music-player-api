@@ -1,0 +1,179 @@
+[
+  {
+    "id": "alterNullability.dropNotNull.Author.updated_at",
+    "label": "Drop NOT NULL on \"Author\".\"updated_at\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "updated_at",
+        "table": "Author"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"updated_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Author",
+          "updated_at"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"updated_at\" on \"Author\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"updated_at\"",
+        "sql": "ALTER TABLE \"public\".\"Author\" ALTER COLUMN \"updated_at\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"updated_at\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Author",
+          "updated_at",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.Song.updated_at",
+    "label": "Drop NOT NULL on \"Song\".\"updated_at\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "updated_at",
+        "table": "Song"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"updated_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Song",
+          "updated_at"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"updated_at\" on \"Song\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"updated_at\"",
+        "sql": "ALTER TABLE \"public\".\"Song\" ALTER COLUMN \"updated_at\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"updated_at\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Song",
+          "updated_at",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.Song.release_date",
+    "label": "Add column release_date to Song",
+    "summary": "Adds column release_date to table Song",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Song"
+      }
+    },
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "ensure column \"release_date\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Song",
+          "release_date"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"release_date\" on \"Song\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"release_date\"",
+        "sql": "ALTER TABLE \"public\".\"Song\" ADD COLUMN \"release_date\" date DEFAULT ('epoch') NOT NULL"
+      },
+      {
+        "description": "drop temporary default from column \"release_date\"",
+        "sql": "ALTER TABLE \"public\".\"Song\" ALTER COLUMN \"release_date\" DROP DEFAULT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"release_date\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Song",
+          "release_date"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"release_date\" on \"Song\""
+        }
+      },
+      {
+        "description": "verify column \"release_date\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Song",
+          "release_date",
+          "NO"
+        ]
+      },
+      {
+        "description": "verify column \"release_date\" has no default after temporary default removal",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"column_default\" IS NOT NULL)) AS \"result\"",
+        "params": [
+          "public",
+          "Song",
+          "release_date"
+        ]
+      },
+      {
+        "description": "verify column \"release_date\" has type \"date\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Song",
+          "release_date",
+          "date"
+        ]
+      }
+    ]
+  }
+]
