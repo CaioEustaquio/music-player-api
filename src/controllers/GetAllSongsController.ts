@@ -1,24 +1,34 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { GetAllSongsSchema, GetAllSongsDto } from "@/dtos/GetAllSongsDto";
+import { GetAllSongsQueryDto } from "@/dtos/GetAllSongsQueryDto";
+import { SongService } from "@/services/SongService";
 
 export class GetAllSongsController {
-  constructor(private songService?: any) { }
+  constructor(private songService: SongService) { }
 
-  getAll = async (
-    request: FastifyRequest<{ Querystring: GetAllSongsDto }>,
+  async getAll(
+    request: FastifyRequest<{ Querystring: GetAllSongsQueryDto }>,
     reply: FastifyReply
-  ) => {
-    const data = request.query;
-    return [
-      {
-        id: 1,
-        title: "Billie Jean",
-        author: "Michael Jackson",
-        singer: "Michael Jackson",
-        duration: "4:54",
-        thumbnail: "https://amazonaws.com",
-        file: "https://amazonaws.com"
-      }
-    ];
+  ) {
+    const {
+      search,
+      page,
+      limit,
+      orderBy,
+      order,
+    } = request.query;
+
+    try {
+      const songs = await this.songService.getAll(
+        search,
+        page,
+        limit,
+        orderBy,
+        order
+      );
+      reply.send(songs).code(200);
+
+    } catch (err: unknown) {
+      console.error(err);
+    }
   }
 }
